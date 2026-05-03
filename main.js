@@ -24,6 +24,79 @@ class DearMeApp extends HTMLElement {
           box-shadow: 0 10px 30px rgba(0,0,0,0.05);
           text-align: center;
           font-family: 'Noto Sans KR', sans-serif;
+          position: relative;
+        }
+
+        /* Menu Styles */
+        .menu-container {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          z-index: 100;
+        }
+
+        .menu-btn {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: #8c7a6b;
+          padding: 10px;
+          border-radius: 50%;
+          transition: background-color 0.3s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .menu-btn:hover {
+          background-color: rgba(140, 122, 107, 0.1);
+        }
+
+        .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 10px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          width: 200px;
+          padding: 10px 0;
+          display: none;
+          flex-direction: column;
+          text-align: left;
+          border: 1px solid rgba(140, 122, 107, 0.1);
+          animation: slideDown 0.3s ease-out;
+        }
+
+        .dropdown-menu.show {
+          display: flex;
+        }
+
+        .menu-item {
+          padding: 12px 20px;
+          font-size: 0.95rem;
+          color: #555;
+          cursor: pointer;
+          transition: background-color 0.2s, color 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .menu-item:hover {
+          background-color: #f9f7f5;
+          color: #8c7a6b;
+        }
+
+        .menu-item span {
+          font-size: 1.1rem;
+        }
+
+        @keyframes slideDown {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         .header {
@@ -117,41 +190,6 @@ class DearMeApp extends HTMLElement {
             animation: fadeIn 0.5s ease-in;
         }
 
-        .tomorrow-calc {
-          margin-top: 40px;
-          padding-top: 40px;
-          border-top: 1px solid #eee;
-        }
-
-        .tomorrow-calc h3 {
-          font-family: 'Noto Serif KR', serif;
-          font-size: 1.2rem;
-          color: #4a4a4a;
-          margin-bottom: 10px;
-        }
-
-        .tomorrow-calc p {
-          font-size: 0.9rem;
-          color: #666;
-          margin-bottom: 15px;
-        }
-
-        .tomorrow-calc input {
-          padding: 12px 15px;
-          border-radius: 12px;
-          border: 1px solid #ddd;
-          font-family: 'Noto Sans KR', sans-serif;
-          width: 100%;
-          max-width: 250px;
-          margin-bottom: 10px;
-          transition: border-color 0.3s;
-        }
-
-        .tomorrow-calc input:focus {
-          outline: none;
-          border-color: #8c7a6b;
-        }
-
         .toggle-btn {
           background: none;
           border: 1px solid #d1c4b9;
@@ -194,7 +232,22 @@ class DearMeApp extends HTMLElement {
         .hidden {
           display: none;
         }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
       </style>
+
+      <div class="menu-container">
+        <button class="menu-btn" id="menu-toggle-btn">☰</button>
+        <div class="dropdown-menu" id="side-menu">
+          <div class="menu-item"><span>🎨</span> 테마</div>
+          <div class="menu-item"><span>🔒</span> 기념일 잠금</div>
+          <div class="menu-item"><span>💾</span> 백업 및 복원</div>
+          <div class="menu-item"><span>📤</span> 공유 하기</div>
+        </div>
+      </div>
 
       <div class="header">
         <div class="icon">🕰️✉️</div>
@@ -244,6 +297,30 @@ class DearMeApp extends HTMLElement {
     const toggleDateBtn = this.shadowRoot.getElementById('toggle-date-btn');
     const dateSection = this.shadowRoot.getElementById('date-section');
     const inputDate = this.shadowRoot.getElementById('input-date');
+    const menuToggleBtn = this.shadowRoot.getElementById('menu-toggle-btn');
+    const sideMenu = this.shadowRoot.getElementById('side-menu');
+
+    // Menu Toggle
+    menuToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sideMenu.classList.toggle('show');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', () => {
+      if (sideMenu.classList.contains('show')) {
+        sideMenu.classList.remove('show');
+      }
+    });
+
+    sideMenu.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const item = e.target.closest('.menu-item');
+      if (item) {
+        console.log("Menu item clicked:", item.textContent.trim());
+        sideMenu.classList.remove('show');
+      }
+    });
 
     sendBtn.addEventListener('click', () => {
       const message = msgInput.value.trim();
@@ -291,6 +368,10 @@ class DearMeApp extends HTMLElement {
 
       const isSunday = selectedDate.getDay() === 0;
       const isFirstDay = selectedDate.getDate() === 1;
+      
+      const tomorrow = new Date(selectedDate);
+      tomorrow.setDate(selectedDate.getDate() + 1);
+      const isTomorrowFirstDay = tomorrow.getDate() === 1;
 
       suggestionArea.innerHTML = '';
 
@@ -300,12 +381,20 @@ class DearMeApp extends HTMLElement {
           "일요일 밤, 다가올 월요일이 걱정된다면 미래의 나에게 작은 선물을 남겨보세요. '이번 주는 평소보다 조금 더 여유롭게' 같은 다짐만으로도 내일 아침이 조금은 더 가벼워질 거예요.",
           "새로운 한 주의 시작을 앞둔 당신에게 응원을 보냅니다. 거창한 계획이 아니어도 좋아요. 월요일의 내가 웃을 수 있게, 지금의 마음을 한 줄 기록해보는 건 어떨까요?"
         ]);
-      } else if (isFirstDay) {
-        this.renderSuggestions('새로운 시작과 계절감 제안', [
-          "새로운 달이 시작되었습니다. 지난달의 수고은 뒤로하고, 이번 달에 꼭 이루고 싶은 '나만의 계절'은 어떤 모습인가요? 한 달 뒤의 당신이 미소 지을 수 있도록 새로운 시작을 기록해보세요.",
-          "1일, 새로운 페이지를 넘기는 날입니다. 계절의 변화와 함께 이번 달에 채워나갈 행복한 순간들을 미리 상상해볼까요? 미래의 당신이 이 선물을 열어볼 때 얼마나 뿌듯해할지 기대됩니다.",
-          "새달의 첫 단추를 끼우는 오늘, 당신의 마음가짐은 무엇인가요? 새로운 시작이 주는 설렘을 담아 미래의 나에게 따뜻한 격려 한 마디를 보내보세요."
-        ]);
+      } else if (isFirstDay || isTomorrowFirstDay) {
+        if (isFirstDay) {
+          this.renderSuggestions('새로운 시작과 계절감 제안', [
+            "새로운 달이 시작되었습니다. 지난달의 수고은 뒤로하고, 이번 달에 꼭 이루고 싶은 '나만의 계절'은 어떤 모습인가요? 한 달 뒤의 당신이 미소 지을 수 있도록 새로운 시작을 기록해보세요.",
+            "1일, 새로운 페이지를 넘기는 날입니다. 계절의 변화와 함께 이번 달에 채워나갈 행복한 순간들을 미리 상상해볼까요? 미래의 당신이 이 선물을 열어볼 때 얼마나 뿌듯해할지 기대됩니다.",
+            "새달의 첫 단추를 끼우는 오늘, 당신의 마음가짐은 무엇인가요? 새로운 시작이 주는 설렘을 담아 미래의 나에게 따뜻한 격려 한 마디를 보내보세요."
+          ]);
+        } else {
+          this.renderSuggestions('새로운 달을 맞이하는 설렘 제안', [
+            "내일이면 새로운 달이 시작됩니다. 한 달을 마무리하며, 다가올 새달에 당신이 피워낼 꽃은 어떤 향기를 담고 있을까요? 설레는 마음을 담아 미래의 나에게 미리 인사를 건네보세요.",
+            "이번 달의 마지막 페이지를 넘기는 오늘, 수고한 당신에게 박수를 보냅니다. 내일 시작될 새로운 한 달을 위해, 지금 느끼는 이 성취감과 기대를 기록해 보는 건 어떨까요?",
+            "새로운 달의 문턱에 서 있는 당신, 내일 아침의 당신이 더 기분 좋게 하루를 시작할 수 있도록 지금의 따뜻한 다짐을 한 줄 남겨주세요."
+          ]);
+        }
       }
     });
   }
