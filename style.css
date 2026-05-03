@@ -1,0 +1,56 @@
+:root {
+  /* Premium Warm Pastel Gradient Colors */
+  --bg-gradient-start: #fdfcfb;
+  --bg-gradient-middle: #f2e9e1;
+  --bg-gradient-end: #e2d1c3;
+  
+  /* Typography Colors */
+  --primary-color: #4a4a4a;
+  --accent-color: #8c7a6b;
+  --text-main: #333333;
+  --text-muted: #666666;
+  
+  /* Fonts */
+  --font-heading: 'Noto Serif KR', serif;
+  --font-body: 'Noto Sans KR', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-middle) 50%, var(--bg-gradient-end) 100%);
+  color: var(--text-main);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+}
+
+/* Subtle noise texture over the entire background */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: url("https://www.transparenttextures.com/patterns/natural-paper.png");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 1;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  color: var(--primary-color);
+  font-weight: 700;
+  margin-top: 0;
+}
+
+p {
+  line-height: 1.6;
+}
+
+/* Smooth selection color */
+::selection {
+  background: rgba(140, 122, 107, 0.2);
+  color: var(--primary-color);
+}
