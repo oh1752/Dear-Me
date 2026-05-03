@@ -152,46 +152,43 @@ class DearMeApp extends HTMLElement {
           border-color: #8c7a6b;
         }
 
-        .suggestion-box {
-          margin-top: 30px;
-          padding: 24px;
-          background: rgba(140, 122, 107, 0.08);
-          border-radius: 20px;
-          text-align: left;
-          animation: fadeIn 0.8s ease-out;
-          border: 1px solid rgba(140, 122, 107, 0.1);
-        }
-
-        .suggestion-box h4 {
-          font-family: 'Noto Serif KR', serif;
-          font-size: 1.1rem;
-          color: #4a4a4a;
-          margin-bottom: 16px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .suggestion-item {
-          font-size: 0.95rem;
-          color: #555;
-          line-height: 1.7;
-          margin-bottom: 18px;
-          padding-bottom: 18px;
-          border-bottom: 1px solid rgba(140, 122, 107, 0.1);
-          cursor: pointer;
-          transition: all 0.3s;
-        }
-
-        .suggestion-item:last-child {
-          margin-bottom: 0;
-          padding-bottom: 0;
-          border-bottom: none;
-        }
-
-        .suggestion-item:hover {
+        .toggle-btn {
+          background: none;
+          border: 1px solid #d1c4b9;
           color: #8c7a6b;
-          transform: translateX(5px);
+          padding: 10px 20px;
+          border-radius: 20px;
+          cursor: pointer;
+          font-family: 'Noto Sans KR', sans-serif;
+          font-size: 0.9rem;
+          transition: all 0.3s;
+          margin-top: 20px;
+          margin-bottom: 20px;
+        }
+
+        .toggle-btn:hover {
+          background-color: rgba(140, 122, 107, 0.05);
+          border-color: #8c7a6b;
+        }
+
+        .date-input-section {
+          margin-bottom: 30px;
+          animation: fadeIn 0.5s ease-out;
+        }
+
+        .date-input-section input {
+          padding: 12px 15px;
+          border-radius: 12px;
+          border: 1px solid #ddd;
+          font-family: 'Noto Sans KR', sans-serif;
+          width: 100%;
+          max-width: 250px;
+          transition: border-color 0.3s;
+        }
+
+        .date-input-section input:focus {
+          outline: none;
+          border-color: #8c7a6b;
         }
 
         .hidden {
@@ -206,6 +203,14 @@ class DearMeApp extends HTMLElement {
 
       <div class="greeting">
         안녕하세요, 미래의 당신은 어떤 모습인가요?
+      </div>
+
+      <div style="text-align: center;">
+        <button class="toggle-btn" id="toggle-date-btn">📅 오늘 요일 입력하기</button>
+      </div>
+
+      <div class="date-input-section hidden" id="date-section">
+        <input type="date" id="input-date">
       </div>
 
       <div id="suggestion-area"></div>
@@ -236,9 +241,9 @@ class DearMeApp extends HTMLElement {
     const msgInput = this.shadowRoot.getElementById('gift-message');
     const successMsg = this.shadowRoot.getElementById('success-msg');
     const suggestionArea = this.shadowRoot.getElementById('suggestion-area');
-
-    // Automatic Check on Load
-    this.checkAndShowSuggestions();
+    const toggleDateBtn = this.shadowRoot.getElementById('toggle-date-btn');
+    const dateSection = this.shadowRoot.getElementById('date-section');
+    const inputDate = this.shadowRoot.getElementById('input-date');
 
     sendBtn.addEventListener('click', () => {
       const message = msgInput.value.trim();
@@ -251,29 +256,58 @@ class DearMeApp extends HTMLElement {
         alert("미래의 나에게 보낼 메시지를 입력해주세요.");
       }
     });
-  }
 
-  checkAndShowSuggestions() {
-    const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    toggleDateBtn.addEventListener('click', () => {
+      const isHidden = dateSection.classList.contains('hidden');
+      if (isHidden) {
+        dateSection.classList.remove('hidden');
+        toggleDateBtn.textContent = '닫기';
+        
+        // Directly trigger the calendar
+        setTimeout(() => {
+          try {
+            if (inputDate.showPicker) {
+              inputDate.showPicker();
+            } else {
+              inputDate.focus();
+              inputDate.click();
+            }
+          } catch (e) {
+            inputDate.focus();
+          }
+        }, 100);
+      } else {
+        dateSection.classList.add('hidden');
+        toggleDateBtn.textContent = '📅 오늘 요일 입력하기';
+      }
+    });
 
-    const isTomorrowMonday = tomorrow.getDay() === 1;
-    const isTomorrowFirstDay = tomorrow.getDate() === 1;
+    inputDate.addEventListener('change', () => {
+      const selectedDate = new Date(inputDate.value);
+      if (isNaN(selectedDate.getTime())) {
+        suggestionArea.innerHTML = '';
+        return;
+      }
 
-    if (isTomorrowMonday) {
-      this.renderSuggestions('월요병 방지 및 주간 설계 제안', [
-        "내일이 벌써 월요일이라니, 마음이 조금 무거우신가요? 하지만 5일 뒤면 다시 당신만의 온전한 주말이 기다리고 있어요. 이번 한 주, [성취하고 싶은 작은 목표] 하나만 기록해 볼까요? 미래의 당신이 훨씬 가벼운 마음으로 주말을 맞이할 수 있도록요.",
-        "일요일 밤, 다가올 월요일이 걱정된다면 미래의 나에게 작은 선물을 남겨보세요. '이번 주는 평소보다 조금 더 여유롭게' 같은 다짐만으로도 내일 아침이 조금은 더 가벼워질 거예요.",
-        "새로운 한 주의 시작을 앞둔 당신에게 응원을 보냅니다. 거창한 계획이 아니어도 좋아요. 월요일의 내가 웃을 수 있게, 지금의 마음을 한 줄 기록해보는 건 어떨까요?"
-      ]);
-    } else if (isTomorrowFirstDay) {
-      this.renderSuggestions('새로운 시작과 계절감 제안', [
-        "내일은 새로운 달이 시작되는 1일입니다. 지난달의 수고는 뒤로하고, 이번 달에 꼭 이루고 싶은 '나만의 계절'은 어떤 모습인가요? 한 달 뒤의 당신이 미소 지을 수 있도록 새로운 시작을 기록해보세요.",
-        "내일이면 새로운 페이지를 넘기게 됩니다. 계절의 변화와 함께 이번 달에 채워나갈 행복한 순간들을 미리 상상해볼까요? 미래의 당신이 이 선물을 열어볼 때 얼마나 뿌듯해할지 기대됩니다.",
-        "새달의 첫 단추를 끼우는 내일, 당신의 마음가짐은 무엇인가요? 새로운 시작이 주는 설렘을 담아 미래의 나에게 따뜻한 격려 한 마디를 보내보세요."
-      ]);
-    }
+      const isSunday = selectedDate.getDay() === 0;
+      const isFirstDay = selectedDate.getDate() === 1;
+
+      suggestionArea.innerHTML = '';
+
+      if (isSunday) {
+        this.renderSuggestions('월요병 방지 및 주간 설계 제안', [
+          "내일이 벌써 월요일이라니, 마음이 조금 무거우신가요? 하지만 5일 뒤면 다시 당신만의 온전한 주말이 기다리고 있어요. 이번 한 주, [성취하고 싶은 작은 목표] 하나만 기록해 볼까요? 미래의 당신이 훨씬 가벼운 마음으로 주말을 맞이할 수 있도록요.",
+          "일요일 밤, 다가올 월요일이 걱정된다면 미래의 나에게 작은 선물을 남겨보세요. '이번 주는 평소보다 조금 더 여유롭게' 같은 다짐만으로도 내일 아침이 조금은 더 가벼워질 거예요.",
+          "새로운 한 주의 시작을 앞둔 당신에게 응원을 보냅니다. 거창한 계획이 아니어도 좋아요. 월요일의 내가 웃을 수 있게, 지금의 마음을 한 줄 기록해보는 건 어떨까요?"
+        ]);
+      } else if (isFirstDay) {
+        this.renderSuggestions('새로운 시작과 계절감 제안', [
+          "새로운 달이 시작되었습니다. 지난달의 수고은 뒤로하고, 이번 달에 꼭 이루고 싶은 '나만의 계절'은 어떤 모습인가요? 한 달 뒤의 당신이 미소 지을 수 있도록 새로운 시작을 기록해보세요.",
+          "1일, 새로운 페이지를 넘기는 날입니다. 계절의 변화와 함께 이번 달에 채워나갈 행복한 순간들을 미리 상상해볼까요? 미래의 당신이 이 선물을 열어볼 때 얼마나 뿌듯해할지 기대됩니다.",
+          "새달의 첫 단추를 끼우는 오늘, 당신의 마음가짐은 무엇인가요? 새로운 시작이 주는 설렘을 담아 미래의 나에게 따뜻한 격려 한 마디를 보내보세요."
+        ]);
+      }
+    });
   }
 
   renderSuggestions(title, phrases) {
