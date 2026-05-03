@@ -2,12 +2,23 @@ class DearMeApp extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.quotes = [
+      "미래의 당신은 지금의 당신에게 어떤 말을 해주고 싶을까요?",
+      "오늘의 가장 빛나는 순간을 적어보세요.",
+      "힘들었던 일도 나중엔 추억이 될 거예요.",
+      "나 자신에게 선물을 보낸다는 마음으로...",
+      "기억하고 싶은 소중한 사람의 이름을 떠올려보세요.",
+      "내일의 나를 위해 오늘 할 수 있는 작은 배려는 무엇인가요?",
+      "지금 이 순간, 당신을 미소 짓게 하는 것들."
+    ];
+    this.quoteInterval = null;
   }
 
   connectedCallback() {
     this.render();
     this.setupEventListeners();
     this.applyAdaptiveGreeting();
+    this.setupQuoteGuide();
   }
 
   render() {
@@ -216,6 +227,38 @@ class DearMeApp extends HTMLElement {
           transform: translateY(-2px);
         }
 
+        /* Cinematic Quote Guide Styles */
+        .textarea-container {
+          position: relative;
+          width: 100%;
+        }
+
+        .quote-guide {
+          position: absolute;
+          top: 25px;
+          left: 25px;
+          right: 25px;
+          pointer-events: none;
+          font-family: 'Noto Serif KR', serif;
+          font-style: italic;
+          font-size: 1.05rem;
+          color: rgba(140, 122, 107, 0.4);
+          line-height: 1.8;
+          opacity: 0;
+          text-align: left;
+        }
+
+        .quote-guide.active {
+          animation: subtitleEffect 6s infinite;
+        }
+
+        @keyframes subtitleEffect {
+          0% { opacity: 0; transform: translateY(5px); }
+          10% { opacity: 1; transform: translateY(0); }
+          90% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-5px); }
+        }
+
         input[type="date"] {
           border: 1px solid rgba(140, 122, 107, 0.2);
           cursor: pointer;
@@ -347,7 +390,10 @@ class DearMeApp extends HTMLElement {
         <div class="workspace">
           <div class="input-group">
             <label for="gift-message">미래의 나에게 줄 선물</label>
-            <textarea id="gift-message" placeholder="오늘의 마음, 혹은 다짐을 사랑을 담아 적어보세요."></textarea>
+            <div class="textarea-container">
+              <div class="quote-guide" id="quote-guide"></div>
+              <textarea id="gift-message" placeholder="오늘의 마음, 혹은 다짐을 사랑을 담아 적어보세요."></textarea>
+            </div>
           </div>
 
           <div class="input-group">
@@ -519,6 +565,41 @@ class DearMeApp extends HTMLElement {
     } else {
       greetingEl.textContent = "안녕하세요, 미래의 당신은 어떤 모습인가요? 지금의 진심을 담아 선물을 보내보세요.";
     }
+  }
+
+  setupQuoteGuide() {
+    const msgInput = this.shadowRoot.getElementById('gift-message');
+    const quoteGuide = this.shadowRoot.getElementById('quote-guide');
+    let quoteIndex = 0;
+
+    const updateQuote = () => {
+      quoteGuide.textContent = this.quotes[quoteIndex];
+      quoteIndex = (quoteIndex + 1) % this.quotes.length;
+    };
+
+    msgInput.addEventListener('focus', () => {
+      if (!msgInput.value.trim()) {
+        updateQuote();
+        quoteGuide.classList.add('active');
+        this.quoteInterval = setInterval(updateQuote, 6000);
+      }
+    });
+
+    msgInput.addEventListener('blur', () => {
+      quoteGuide.classList.remove('active');
+      clearInterval(this.quoteInterval);
+    });
+
+    msgInput.addEventListener('input', () => {
+      if (msgInput.value.trim()) {
+        quoteGuide.classList.remove('active');
+        clearInterval(this.quoteInterval);
+      } else if (document.activeElement === msgInput) {
+        updateQuote();
+        quoteGuide.classList.add('active');
+        this.quoteInterval = setInterval(updateQuote, 6000);
+      }
+    });
   }
 
   renderSuggestions(area, title, phrases) {
