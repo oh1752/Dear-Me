@@ -192,6 +192,10 @@ class DearMeApp extends HTMLElement {
         안녕하세요, 미래의 당신은 어떤 모습인가요?
       </div>
 
+      <div style="text-align: center; margin-bottom: 30px;">
+        <button class="toggle-btn" id="toggle-calc-btn">📅 오늘 요일 입력하기</button>
+      </div>
+
       <div class="input-group">
         <label for="gift-message">미래의 나에게 줄 선물 (목표나 다짐)</label>
         <textarea id="gift-message" placeholder="예: 6개월 동안 꾸준히 운동하는 습관을 선물할게."></textarea>
@@ -209,10 +213,6 @@ class DearMeApp extends HTMLElement {
       <div class="success-message" id="success-msg">
         성공적으로 미래로 편지를 보냈습니다. <br>
         시간이 되면 과거의 당신으로부터 응원이 도착할 것입니다.
-      </div>
-
-      <div style="text-align: center;">
-        <button class="toggle-btn" id="toggle-calc-btn">📅 내일 요일 확인하기</button>
       </div>
 
       <div class="tomorrow-calc hidden" id="tomorrow-calc-section">
@@ -250,10 +250,9 @@ class DearMeApp extends HTMLElement {
       if (isHidden) {
         calcSection.classList.remove('hidden');
         toggleBtn.textContent = '닫기';
-        calcSection.scrollIntoView({ behavior: 'smooth' });
       } else {
         calcSection.classList.add('hidden');
-        toggleBtn.textContent = '📅 내일 요일 확인하기';
+        toggleBtn.textContent = '📅 오늘 요일 입력하기';
       }
     });
 
