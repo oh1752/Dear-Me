@@ -141,6 +141,11 @@ class DearMeApp extends HTMLElement {
         <textarea id="gift-message" placeholder="예: 6개월 동안 꾸준히 운동하는 습관을 선물할게."></textarea>
       </div>
 
+      <div class="input-group">
+        <label for="unlock-date">이 선물을 언제 열어볼까요?</label>
+        <input type="date" id="unlock-date" />
+      </div>
+
       <button class="action-button" id="send-btn">
         미래의 나에게 선물 보내기
       </button>
