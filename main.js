@@ -10,10 +10,6 @@ class DearMeApp extends HTMLElement {
   }
 
   render() {
-    // Generate a future year for the greeting (e.g., 1 year from now)
-    const currentYear = new Date().getFullYear();
-    const futureYear = currentYear + 1;
-
     this.shadowRoot.innerHTML = `
       <style>
         :host {
@@ -133,7 +129,7 @@ class DearMeApp extends HTMLElement {
       </div>
 
       <div class="greeting">
-        안녕하세요, ${futureYear}년의 당신은 어떤 모습인가요?
+        안녕하세요, 미래의 당신은 어떤 모습인가요?
       </div>
 
       <div class="input-group">

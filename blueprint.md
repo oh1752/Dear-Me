@@ -15,7 +15,7 @@
   - **Iconography**: Envelope combined with clock elements (🕰️✉️) representing time capsules.
 
 ## UX Scenarios
-- **Greeting**: Users are greeted with an imaginative prompt: "안녕하세요, [미래 연도]년의 당신은 어떤 모습인가요?" (Hello, what do you look like in [Year]?)
+- **Greeting**: Users are greeted with an imaginative prompt: "안녕하세요, 미래의 당신은 어떤 모습인가요?" (Hello, what does your future self look like?)
 - **Action Phrase**: Instead of "Write Goal", the action is framed as "미래의 나에게 줄 선물" (A gift for my future self). Example: "6개월 뒤의 나에게 '운동하는 습관'을 선물하시겠어요?"
 - **Notification (Future Implementation)**: "과거의 당신으로부터 응원이 도착했습니다." (Support has arrived from your past self.)
 
