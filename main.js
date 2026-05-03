@@ -409,7 +409,7 @@ class DearMeApp extends HTMLElement {
             <label for="gift-message">미래의 나에게 줄 선물</label>
             <div class="textarea-container">
               <div class="quote-guide" id="quote-guide"></div>
-              <textarea id="gift-message" placeholder="오늘의 마음, 혹은 다짐을 사랑을 담아 적어보세요."></textarea>
+              <textarea id="gift-message"></textarea>
             </div>
           </div>
 
@@ -594,8 +594,15 @@ class DearMeApp extends HTMLElement {
       quoteIndex = (quoteIndex + 1) % this.quotes.length;
     };
 
+    // Initialize automatically if empty
+    if (!msgInput.value.trim()) {
+      updateQuote();
+      quoteGuide.classList.add('active');
+      this.quoteInterval = setInterval(updateQuote, 6000);
+    }
+
     msgInput.addEventListener('focus', () => {
-      if (!msgInput.value.trim()) {
+      if (!msgInput.value.trim() && !this.quoteInterval) {
         updateQuote();
         quoteGuide.classList.add('active');
         this.quoteInterval = setInterval(updateQuote, 6000);
@@ -603,18 +610,25 @@ class DearMeApp extends HTMLElement {
     });
 
     msgInput.addEventListener('blur', () => {
-      quoteGuide.classList.remove('active');
-      clearInterval(this.quoteInterval);
+      // Keep it active even on blur if empty, to serve as a ghost example
+      if (msgInput.value.trim()) {
+        quoteGuide.classList.remove('active');
+        clearInterval(this.quoteInterval);
+        this.quoteInterval = null;
+      }
     });
 
     msgInput.addEventListener('input', () => {
       if (msgInput.value.trim()) {
         quoteGuide.classList.remove('active');
         clearInterval(this.quoteInterval);
-      } else if (this.shadowRoot.activeElement === msgInput) {
-        updateQuote();
-        quoteGuide.classList.add('active');
-        this.quoteInterval = setInterval(updateQuote, 6000);
+        this.quoteInterval = null;
+      } else {
+        if (!this.quoteInterval) {
+          updateQuote();
+          quoteGuide.classList.add('active');
+          this.quoteInterval = setInterval(updateQuote, 6000);
+        }
       }
     });
   }
