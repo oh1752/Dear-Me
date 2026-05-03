@@ -150,6 +150,15 @@ class DearMeApp extends HTMLElement {
         성공적으로 미래로 편지를 보냈습니다. <br>
         시간이 되면 과거의 당신으로부터 응원이 도착할 것입니다.
       </div>
+
+      <hr style="margin: 40px 0; border: 0; border-top: 1px solid #eee;">
+
+      <div class="tomorrow-calc">
+        <h3>📅 내일은 무슨 요일일까요?</h3>
+        <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">오늘 날짜를 선택하시면 내일의 요일을 알려드려요.</p>
+        <input type="date" id="today-date" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 10px; width: 100%; max-width: 250px;">
+        <div id="tomorrow-result" style="margin-top: 10px; font-weight: 500; color: #8c7a6b;"></div>
+      </div>
     `;
   }
 
@@ -157,19 +166,33 @@ class DearMeApp extends HTMLElement {
     const sendBtn = this.shadowRoot.getElementById('send-btn');
     const msgInput = this.shadowRoot.getElementById('gift-message');
     const successMsg = this.shadowRoot.getElementById('success-msg');
+    const todayInput = this.shadowRoot.getElementById('today-date');
+    const tomorrowResult = this.shadowRoot.getElementById('tomorrow-result');
 
     sendBtn.addEventListener('click', () => {
       const message = msgInput.value.trim();
       if (message) {
-        // Here we would typically save to Firebase
         console.log("Capsule sealed for future:", message);
-        
-        // UI Feedback
         sendBtn.style.display = 'none';
         msgInput.disabled = true;
         successMsg.style.display = 'block';
       } else {
         alert("미래의 나에게 보낼 메시지를 입력해주세요.");
+      }
+    });
+
+    todayInput.addEventListener('change', () => {
+      const selectedDate = new Date(todayInput.value);
+      if (!isNaN(selectedDate.getTime())) {
+        const tomorrow = new Date(selectedDate);
+        tomorrow.setDate(selectedDate.getDate() + 1);
+        
+        const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+        const tomorrowDay = days[tomorrow.getDay()];
+        
+        tomorrowResult.innerHTML = `내일은 <strong>${tomorrowDay}</strong> 입니다. ✨`;
+      } else {
+        tomorrowResult.textContent = '';
       }
     });
   }

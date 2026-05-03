@@ -4,20 +4,20 @@
 "Dear Me" is an elegant and intimate web application designed for users to write letters or set goals for their future selves. It combines a luxurious, premium aesthetic with the warmth of personal care, treating future goals as "gifts" rather than just tasks.
 
 ## Current State & Outline
-- **Version**: V1 (Concept & Basic UI setup)
+- **Version**: V1.1 (Tomorrow's Day Calculator added)
 - **Features**: 
   - Capsule creation interface.
   - Future greeting and intuitive wording.
+  - **Tomorrow's Day Calculator**: A utility at the bottom to check what day of the week tomorrow will be based on a selected date.
 - **Design Strategy**: 
   - **Concept**: Elegant, warm, "Flow of Time".
-  - **Colors**: Soft, warm pastel gradients (e.g., warm beige to soft white) to evoke a sense of calm and premium feel.
-  - **Typography**: Elegant Serif fonts (Noto Serif KR) for headers and welcoming texts to bring luxury, paired with clean Sans-serif (Noto Sans KR) for high readability in body texts.
-  - **Iconography**: Envelope combined with clock elements (🕰️✉️) representing time capsules.
+  - **Colors**: Soft, warm pastel gradients.
+  - **Typography**: Noto Serif KR & Noto Sans KR.
 
 ## UX Scenarios
-- **Greeting**: Users are greeted with an imaginative prompt: "안녕하세요, 미래의 당신은 어떤 모습인가요?" (Hello, what does your future self look like?)
-- **Action Phrase**: Instead of "Write Goal", the action is framed as "미래의 나에게 줄 선물" (A gift for my future self). Example: "6개월 뒤의 나에게 '운동하는 습관'을 선물하시겠어요?"
-- **Notification (Future Implementation)**: "과거의 당신으로부터 응원이 도착했습니다." (Support has arrived from your past self.)
+- **Greeting**: "안녕하세요, 미래의 당신은 어떤 모습인가요?"
+- **Tomorrow Preview**: "오늘의 날짜를 입력하면 내일의 요일을 미리 알려드립니다." (Enter today's date and we'll tell you tomorrow's day.)
+- **Action Phrase**: "미래의 나에게 선물 보내기"
 
 ## Firebase Implementation Plan (Future)
 - **Firestore**: Create a `Capsules` (or `Letters`) collection. Key fields: `content`, `createdAt`, `unlockDate`. Logic will hide contents until `currentTime >= unlockDate`.
