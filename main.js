@@ -159,6 +159,28 @@ class DearMeApp extends HTMLElement {
           font-size: 1.1rem;
           min-height: 1.5rem;
         }
+
+        .toggle-btn {
+          background: none;
+          border: 1px solid #d1c4b9;
+          color: #8c7a6b;
+          padding: 10px 20px;
+          border-radius: 20px;
+          cursor: pointer;
+          font-family: 'Noto Sans KR', sans-serif;
+          font-size: 0.9rem;
+          transition: all 0.3s;
+          margin-top: 20px;
+        }
+
+        .toggle-btn:hover {
+          background-color: rgba(140, 122, 107, 0.05);
+          border-color: #8c7a6b;
+        }
+
+        .hidden {
+          display: none;
+        }
       </style>
 
       <div class="header">
@@ -189,7 +211,11 @@ class DearMeApp extends HTMLElement {
         시간이 되면 과거의 당신으로부터 응원이 도착할 것입니다.
       </div>
 
-      <div class="tomorrow-calc">
+      <div style="text-align: center;">
+        <button class="toggle-btn" id="toggle-calc-btn">📅 내일 요일 확인하기</button>
+      </div>
+
+      <div class="tomorrow-calc hidden" id="tomorrow-calc-section">
         <h3>📅 내일은 무슨 요일일까요?</h3>
         <p>오늘 날짜를 선택하시면 내일의 요일을 미리 알려드립니다.</p>
         <input type="date" id="today-date">
@@ -204,6 +230,8 @@ class DearMeApp extends HTMLElement {
     const successMsg = this.shadowRoot.getElementById('success-msg');
     const todayInput = this.shadowRoot.getElementById('today-date');
     const tomorrowResult = this.shadowRoot.getElementById('tomorrow-result');
+    const toggleBtn = this.shadowRoot.getElementById('toggle-calc-btn');
+    const calcSection = this.shadowRoot.getElementById('tomorrow-calc-section');
 
     sendBtn.addEventListener('click', () => {
       const message = msgInput.value.trim();
@@ -214,6 +242,18 @@ class DearMeApp extends HTMLElement {
         successMsg.style.display = 'block';
       } else {
         alert("미래의 나에게 보낼 메시지를 입력해주세요.");
+      }
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      const isHidden = calcSection.classList.contains('hidden');
+      if (isHidden) {
+        calcSection.classList.remove('hidden');
+        toggleBtn.textContent = '닫기';
+        calcSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        calcSection.classList.add('hidden');
+        toggleBtn.textContent = '📅 내일 요일 확인하기';
       }
     });
 
