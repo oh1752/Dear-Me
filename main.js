@@ -292,6 +292,21 @@ class DearMeApp extends HTMLElement {
       if (isHidden) {
         calcSection.classList.remove('hidden');
         toggleBtn.textContent = '닫기';
+        
+        // Directly trigger the calendar (date picker)
+        setTimeout(() => {
+          try {
+            if (todayInput.showPicker) {
+              todayInput.showPicker();
+            } else {
+              todayInput.focus();
+              todayInput.click();
+            }
+          } catch (e) {
+            console.log("Picker not supported, falling back to focus.");
+            todayInput.focus();
+          }
+        }, 100);
       } else {
         calcSection.classList.add('hidden');
         toggleBtn.textContent = '📅 오늘 요일 입력하기';
