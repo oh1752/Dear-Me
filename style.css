@@ -1,21 +1,33 @@
 :root {
-  --primary-color: #6a1b9a;
-  --bg-color: #f3e5f5;
-  --text-color: #333;
+  /* Warm Pastel Gradient Colors */
+  --bg-gradient-start: #fdfcfb;
+  --bg-gradient-end: #e2d1c3;
+  
+  /* Typography Colors */
+  --primary-color: #4a4a4a;
+  --accent-color: #8c7a6b;
+  --text-main: #333333;
+  --text-muted: #666666;
+  
+  /* Fonts */
+  --font-heading: 'Noto Serif KR', serif;
+  --font-body: 'Noto Sans KR', sans-serif;
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  font-family: var(--font-body);
+  background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+  color: var(--text-main);
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-h1 {
+/* Ensure global elements take the font if not encapsulated */
+h1, h2, h3 {
+  font-family: var(--font-heading);
   color: var(--primary-color);
+  font-weight: 700;
 }
