@@ -1,25 +1,3 @@
-/**
- * Dear Me V2: Future Self Time Capsule
- * Role: 10-year experienced life planner and emotional therapist.
- * Tone: Professional, warm, encouraging, and sophisticated.
- */
-
-// Firebase Configuration (Placeholder - User should replace with their own)
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-if (typeof firebase !== 'undefined') {
-  firebase.initializeApp(firebaseConfig);
-  var db = firebase.firestore();
-}
-
 class DearMeApp extends HTMLElement {
   constructor() {
     super();
@@ -64,6 +42,78 @@ class DearMeApp extends HTMLElement {
           border-radius: 30px;
         }
 
+        /* Menu Styles - Restored */
+        .menu-container {
+          position: absolute;
+          top: 25px;
+          left: 25px;
+          z-index: 100;
+        }
+
+        .menu-btn {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          cursor: pointer;
+          color: #8c7a6b;
+          padding: 10px;
+          border-radius: 50%;
+          transition: background-color 0.3s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .menu-btn:hover {
+          background-color: rgba(140, 122, 107, 0.1);
+        }
+
+        .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 10px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          width: 200px;
+          padding: 10px 0;
+          display: none;
+          flex-direction: column;
+          text-align: left;
+          border: 1px solid rgba(140, 122, 107, 0.1);
+          animation: slideDownMenu 0.3s ease-out;
+        }
+
+        .dropdown-menu.show {
+          display: flex;
+        }
+
+        .menu-item {
+          padding: 12px 20px;
+          font-size: 0.95rem;
+          color: #555;
+          cursor: pointer;
+          transition: background-color 0.2s, color 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .menu-item:hover {
+          background-color: #f9f7f5;
+          color: #8c7a6b;
+        }
+
+        .menu-item span {
+          font-size: 1.1rem;
+        }
+
+        @keyframes slideDownMenu {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         .header {
           margin-bottom: 40px;
         }
@@ -94,6 +144,30 @@ class DearMeApp extends HTMLElement {
           padding: 0 20px;
         }
 
+        /* Toggle Button - Restored */
+        .toggle-btn {
+          background: none;
+          border: 1px solid #d1c4b9;
+          color: #8c7a6b;
+          padding: 10px 20px;
+          border-radius: 20px;
+          cursor: pointer;
+          font-family: 'Noto Sans KR', sans-serif;
+          font-size: 0.9rem;
+          transition: all 0.3s;
+          margin-bottom: 20px;
+        }
+
+        .toggle-btn:hover {
+          background-color: rgba(140, 122, 107, 0.05);
+          border-color: #8c7a6b;
+        }
+
+        .date-input-section {
+          margin-bottom: 30px;
+          animation: fadeIn 0.5s ease-out;
+        }
+
         .workspace {
           display: flex;
           flex-direction: column;
@@ -115,58 +189,36 @@ class DearMeApp extends HTMLElement {
           margin-left: 5px;
         }
 
-        textarea {
+        textarea, input[type="email"], input[type="date"] {
           width: 100%;
-          min-height: 200px;
-          padding: 25px;
+          padding: 15px 20px;
           border: none;
-          border-radius: 20px;
+          border-radius: 15px;
           background: rgba(255, 255, 255, 0.8);
           font-family: 'Noto Sans KR', sans-serif;
           font-size: 1.05rem;
-          line-height: 1.8;
-          resize: none;
           box-sizing: border-box;
           transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
           box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
           color: #333;
         }
 
-        textarea:focus {
+        textarea {
+          min-height: 150px;
+          resize: none;
+          line-height: 1.8;
+        }
+
+        textarea:focus, input:focus {
           outline: none;
           background: #fff;
           box-shadow: 0 10px 30px rgba(140, 122, 107, 0.1);
           transform: translateY(-2px);
         }
 
-        textarea::placeholder {
-          color: #bbb;
-          font-style: italic;
-        }
-
-        .date-input-wrapper {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          margin-top: 10px;
-        }
-
         input[type="date"] {
-          padding: 15px 20px;
-          border-radius: 15px;
           border: 1px solid rgba(140, 122, 107, 0.2);
-          background: rgba(255, 255, 255, 0.6);
-          font-family: 'Noto Sans KR', sans-serif;
-          font-size: 1rem;
-          color: #555;
           cursor: pointer;
-          transition: all 0.3s;
-        }
-
-        input[type="date"]:focus {
-          outline: none;
-          border-color: #8c7a6b;
-          background: #fff;
         }
 
         .action-button {
@@ -182,18 +234,12 @@ class DearMeApp extends HTMLElement {
           transition: all 0.4s;
           box-shadow: 0 10px 25px rgba(140, 122, 107, 0.3);
           margin-top: 20px;
-          position: relative;
-          overflow: hidden;
         }
 
         .action-button:hover {
           background-color: #7a6859;
           transform: translateY(-3px);
           box-shadow: 0 15px 35px rgba(140, 122, 107, 0.4);
-        }
-
-        .action-button:active {
-          transform: translateY(0);
         }
 
         .success-state {
@@ -235,17 +281,13 @@ class DearMeApp extends HTMLElement {
           display: none;
         }
 
-        /* Suggestions box */
-        #suggestion-area {
-          margin-bottom: 20px;
-        }
-        
         .suggestion-box {
           background: rgba(140, 122, 107, 0.05);
           padding: 20px;
           border-radius: 20px;
           border: 1px solid rgba(140, 122, 107, 0.1);
           text-align: left;
+          margin-bottom: 20px;
         }
 
         .suggestion-box h4 {
@@ -272,6 +314,16 @@ class DearMeApp extends HTMLElement {
         }
       </style>
 
+      <div class="menu-container">
+        <button class="menu-btn" id="menu-toggle-btn">☰</button>
+        <div class="dropdown-menu" id="side-menu">
+          <div class="menu-item"><span>🎨</span> 테마</div>
+          <div class="menu-item"><span>🔒</span> 기념일 잠금</div>
+          <div class="menu-item"><span>💾</span> 백업 및 복원</div>
+          <div class="menu-item"><span>📤</span> 공유 하기</div>
+        </div>
+      </div>
+
       <div id="main-content">
         <div class="header">
           <div class="icon">✉️✨</div>
@@ -279,7 +331,15 @@ class DearMeApp extends HTMLElement {
         </div>
 
         <div class="greeting" id="greeting-text">
-          당신의 개인 플래너가 소중한 기록을 위해 기다리고 있습니다.
+          안녕하세요, 미래의 당신은 어떤 모습인가요?
+        </div>
+
+        <div style="text-align: center;">
+          <button class="toggle-btn" id="toggle-date-btn">📅 오늘 요일 입력하기</button>
+        </div>
+
+        <div class="date-input-section hidden" id="date-section">
+          <input type="date" id="input-date">
         </div>
 
         <div id="suggestion-area"></div>
@@ -291,14 +351,17 @@ class DearMeApp extends HTMLElement {
           </div>
 
           <div class="input-group">
+            <label for="recipient-email">이메일 주소</label>
+            <input type="email" id="recipient-email" placeholder="미래의 나에게 보낼 메일 주소를 입력해 주세요." />
+          </div>
+
+          <div class="input-group">
             <label for="unlock-date">이 선물을 언제 열어 볼까요?</label>
-            <div class="date-input-wrapper">
-              <input type="date" id="unlock-date" />
-            </div>
+            <input type="date" id="unlock-date" />
           </div>
 
           <button class="action-button" id="seal-btn">
-            사랑을 담아 밀봉하기
+            밀봉해 드립니다
           </button>
         </div>
       </div>
@@ -307,8 +370,8 @@ class DearMeApp extends HTMLElement {
         <span class="success-icon">🕯️📜</span>
         <div class="success-title">순간이 밀봉되었습니다.</div>
         <div class="success-text">
-          당신이 보낸 따뜻한 마음은Firestore에 안전하게 보관되었습니다.<br>
-          약속한 시간이 되면 과거의 당신으로부터 선물이 도착할 것입니다.
+          당신이 보낸 따뜻한 마음은 Firestore에 안전하게 보관되었습니다.<br>
+          약속한 날짜에 입력하신 이메일로 특별한 링크가 도착할 것입니다.
         </div>
       </div>
     `;
@@ -317,53 +380,88 @@ class DearMeApp extends HTMLElement {
   setupEventListeners() {
     const sealBtn = this.shadowRoot.getElementById('seal-btn');
     const msgInput = this.shadowRoot.getElementById('gift-message');
+    const emailInput = this.shadowRoot.getElementById('recipient-email');
     const unlockInput = this.shadowRoot.getElementById('unlock-date');
     const mainContent = this.shadowRoot.getElementById('main-content');
     const successState = this.shadowRoot.getElementById('success-state');
     const suggestionArea = this.shadowRoot.getElementById('suggestion-area');
+    const menuToggleBtn = this.shadowRoot.getElementById('menu-toggle-btn');
+    const sideMenu = this.shadowRoot.getElementById('side-menu');
+    const toggleDateBtn = this.shadowRoot.getElementById('toggle-date-btn');
+    const dateSection = this.shadowRoot.getElementById('date-section');
+    const inputDate = this.shadowRoot.getElementById('input-date');
 
-    sealBtn.addEventListener('click', async () => {
-      const message = msgInput.value.trim();
-      const unlockDate = unlockInput.value;
+    // Menu Toggle
+    menuToggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sideMenu.classList.toggle('show');
+    });
 
-      if (!message) {
-        alert("미래의 나에게 보낼 메시지를 입력해주세요.");
+    document.addEventListener('click', () => {
+      if (sideMenu.classList.contains('show')) {
+        sideMenu.classList.remove('show');
+      }
+    });
+
+    sideMenu.addEventListener('click', (e) => e.stopPropagation());
+
+    // Today Date Toggle
+    toggleDateBtn.addEventListener('click', () => {
+      const isHidden = dateSection.classList.contains('hidden');
+      if (isHidden) {
+        dateSection.classList.remove('hidden');
+        toggleDateBtn.textContent = '닫기';
+        setTimeout(() => {
+          if (inputDate.showPicker) inputDate.showPicker();
+          else inputDate.focus();
+        }, 100);
+      } else {
+        dateSection.classList.add('hidden');
+        toggleDateBtn.textContent = '📅 오늘 요일 입력하기';
+      }
+    });
+
+    inputDate.addEventListener('change', () => {
+      const selectedDate = new Date(inputDate.value);
+      if (isNaN(selectedDate.getTime())) {
+        suggestionArea.innerHTML = '';
         return;
       }
-      if (!unlockDate) {
-        alert("선물을 열어볼 날짜를 선택해주세요.");
+      this.handleDateSuggestions(selectedDate);
+    });
+
+    // Sealing
+    sealBtn.addEventListener('click', async () => {
+      const message = msgInput.value.trim();
+      const email = emailInput.value.trim();
+      const unlockDate = unlockInput.value;
+
+      if (!message || !email || !unlockDate) {
+        alert("모든 필드를 입력해 주세요.");
         return;
       }
 
       const capsule = {
-        uid: "anonymous", // Placeholder for actual auth
+        uid: "anonymous",
         content: message,
+        email: email,
         created_at: new Date(),
         unlock_date: new Date(unlockDate),
         is_opened: false
       };
 
       try {
-        console.log("Sealing capsule:", capsule);
-        
-        // Firestore Save Logic
         if (typeof db !== 'undefined') {
           await db.collection("capsules").add(capsule);
-        } else {
-          console.warn("Firebase not initialized. Simulating save...");
         }
-
-        // Show Success UI
         mainContent.style.display = 'none';
         successState.style.display = 'block';
-
       } catch (error) {
-        console.error("Error sealing capsule:", error);
-        alert("오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+        console.error("Error:", error);
+        alert("오류가 발생했습니다.");
       }
     });
 
-    // Handle suggested clicks
     this.shadowRoot.addEventListener('click', (e) => {
       const item = e.target.closest('.suggestion-item');
       if (item) {
@@ -373,38 +471,54 @@ class DearMeApp extends HTMLElement {
     });
   }
 
+  handleDateSuggestions(selectedDate) {
+    const suggestionArea = this.shadowRoot.getElementById('suggestion-area');
+    const isSunday = selectedDate.getDay() === 0;
+    const isFirstDay = selectedDate.getDate() === 1;
+    
+    const tomorrow = new Date(selectedDate);
+    tomorrow.setDate(selectedDate.getDate() + 1);
+    const isTomorrowFirstDay = tomorrow.getDate() === 1;
+
+    suggestionArea.innerHTML = '';
+
+    if (isSunday) {
+      this.renderSuggestions(suggestionArea, '월요병 방지 및 주간 설계 제안', [
+        "내일이 벌써 월요일이라니, 마음이 조금 무거우신가요? 이번 주 나를 위한 작은 목표 하나를 기록해 볼까요?",
+        "일요일 밤, 다가올 월요일이 걱정된다면 미래의 나에게 따뜻한 위로의 선물을 남겨보세요.",
+        "새로운 한 주의 시작을 앞둔 당신에게 응원을 보냅니다. 지금의 마음을 한 줄 기록해보는 건 어떨까요?"
+      ]);
+    } else if (isFirstDay || isTomorrowFirstDay) {
+      if (isFirstDay) {
+        this.renderSuggestions(suggestionArea, '새로운 시작과 계절감 제안', [
+          "새로운 달이 시작되었습니다. 지난달의 수고는 뒤로하고, 이번 달에 이루고 싶은 목표를 기록해보세요.",
+          "1일, 새로운 페이지를 넘기는 날입니다. 미래의 당신이 이 선물을 열어볼 때 얼마나 뿌듯해할지 기대됩니다.",
+          "새달의 첫 단추를 끼우는 오늘, 당신의 마음가짐을 따뜻한 격려와 함께 보내보세요."
+        ]);
+      } else {
+        this.renderSuggestions(suggestionArea, '새로운 달을 맞이하는 설렘 제안', [
+          "내일이면 새로운 달이 시작됩니다. 한 달을 마무리하며 다가올 새달의 기대를 미리 인사를 건네보세요.",
+          "이번 달의 마지막 페이지를 넘기는 오늘, 수고한 당신에게 박수를 보냅니다. 내일의 기대를 기록해 보세요.",
+          "새로운 달의 문턱에 서 있는 당신, 내일 아침의 당신이 더 기분 좋게 시작할 수 있도록 다짐을 남겨주세요."
+        ]);
+      }
+    }
+  }
+
   applyAdaptiveGreeting() {
     const greetingEl = this.shadowRoot.getElementById('greeting-text');
-    const suggestionArea = this.shadowRoot.getElementById('suggestion-area');
     const now = new Date();
-    const day = now.getDay(); // 0: Sun, 1: Mon...
+    const day = now.getDay();
     const hours = now.getHours();
     const date = now.getDate();
 
-    // 1st Day of Month
     if (date === 1) {
-      greetingEl.textContent = "새로운 달이 시작되었습니다. 이번 달에 당신이 피워낼 꽃은 어떤 향기를 담고 있을까요? 새달의 목표를 미래로 보내보세요.";
-      this.renderSuggestions(suggestionArea, "새로운 시작의 제안", [
-        "이번 달에는 평소보다 조금 더 나 자신을 사랑해보기",
-        "새로운 계절을 맞이하며 꼭 이루고 싶은 [작은 목표] 하나 기록하기",
-        "한 달 뒤의 내가 웃으며 읽을 수 있는 오늘의 설렘 기록하기"
-      ]);
-      return;
+      greetingEl.textContent = "새로운 달이 시작되었습니다. 이번 달의 목표를 미래로 보내보세요.";
+    } else if (day === 0 && hours >= 17) {
+      greetingEl.textContent = "일요일 저녁, 평온한 한 주를 위해 미래의 나에게 작은 응원을 남겨보세요.";
+    } else {
+      greetingEl.textContent = "안녕하세요, 미래의 당신은 어떤 모습인가요? 지금의 진심을 담아 선물을 보내보세요.";
     }
-
-    // Sunday Evening (after 5 PM)
-    if (day === 0 && hours >= 17) {
-      greetingEl.textContent = "일요일 저녁은 온전한 쉼을 위한 시간입니다. 월요병이 걱정된다면, 미래의 나에게 가벼운 위로와 다음 주의 작은 기쁨을 선물해보세요.";
-      this.renderSuggestions(suggestionArea, "평온한 한 주를 위한 제안", [
-        "내일 아침 나를 미소 짓게 할 아주 작은 보상 하나 정해두기",
-        "이번 주 수요일, 나를 위해 준비할 작은 선물 미리 기록하기",
-        "충분한 휴식을 취하고 있는 나에게 보내는 따뜻한 응원"
-      ]);
-      return;
-    }
-
-    // Default
-    greetingEl.textContent = "안녕하세요, 당신의 감성 테라피스트입니다. 미래의 당신은 어떤 모습인가요? 지금의 진심을 담아 선물을 보내보세요.";
   }
 
   renderSuggestions(area, title, phrases) {
