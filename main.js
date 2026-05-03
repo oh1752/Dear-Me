@@ -1,3 +1,24 @@
+// Firebase Configuration - Replace with your actual project config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+let db;
+try {
+  if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+  }
+} catch (error) {
+  console.error("Firebase initialization failed:", error);
+}
+
 class DearMeApp extends HTMLElement {
   constructor() {
     super();
@@ -590,7 +611,7 @@ class DearMeApp extends HTMLElement {
       if (msgInput.value.trim()) {
         quoteGuide.classList.remove('active');
         clearInterval(this.quoteInterval);
-      } else if (document.activeElement === msgInput) {
+      } else if (this.shadowRoot.activeElement === msgInput) {
         updateQuote();
         quoteGuide.classList.add('active');
         this.quoteInterval = setInterval(updateQuote, 6000);
