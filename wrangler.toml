@@ -1,0 +1,10 @@
+# Cloudflare Wrangler Configuration
+name = "dear-me"
+compatibility_date = "2024-05-03"
+
+[assets]
+directory = "./"
+exclude = [".git", ".idx", ".vscode", "blueprint.md", "GEMINI.md"]
+
+[triggers]
+crons = ["0 0 * * *"]
