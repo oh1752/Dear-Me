@@ -264,14 +264,47 @@ class DearMeApp extends HTMLElement {
         h1 { font-family: 'Noto Serif KR', serif; color: var(--theme-text); font-size: 2.5rem; margin: 0; font-weight: 700; }
         .greeting { font-family: 'Noto Serif KR', serif; font-size: 1.2rem; line-height: 1.7; color: var(--theme-text); opacity: 0.8; margin-bottom: 50px; padding: 0 20px; }
         .workspace { display: flex; flex-direction: column; gap: 30px; text-align: left; }
-        .input-group { display: flex; flex-direction: column; gap: 12px; }
+        .input-group { display: flex; flex-direction: column; gap: 12px; position: relative; }
         label { font-family: 'Noto Serif KR', serif; font-weight: 600; color: var(--theme-text); font-size: 1.05rem; }
-        textarea, input[type="email"], input[type="date"] { width: 100%; padding: 20px 25px; border: 1px solid rgba(0,0,0,0.05); border-radius: 20px; background: rgba(255, 255, 255, 0.9); font-family: 'Noto Sans KR', sans-serif; font-size: 1.1rem; box-sizing: border-box; color: #333; }
+        textarea, input[type="email"], input[type="date"], input[type="datetime-local"] { width: 100%; padding: 20px 25px; border: 1px solid rgba(0,0,0,0.05); border-radius: 20px; background: rgba(255, 255, 255, 0.9); font-family: 'Noto Sans KR', sans-serif; font-size: 1.1rem; box-sizing: border-box; color: #333; }
         textarea { min-height: 200px; resize: none; line-height: 1.9; }
         .action-button { background: var(--theme-accent); color: white; border: none; padding: 22px 50px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; font-family: 'Noto Serif KR', serif; font-weight: 700; transition: all 0.4s; box-shadow: 0 15px 40px rgba(0,0,0,0.2); margin-top: 30px; }
+        
+        #quote-guide {
+          position: absolute; top: 60px; left: 25px; right: 25px; pointer-events: none;
+          color: #aaa; font-style: italic; line-height: 1.9; font-size: 1.1rem;
+          opacity: 0; transition: opacity 0.5s;
+        }
+        #quote-guide.active { opacity: 1; }
+
+        /* Modal Styles */
+        .modal-overlay {
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px);
+          display: none; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-content {
+          background: white; padding: 40px; border-radius: 30px; max-width: 400px; width: 85%;
+          text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+          border: 1px solid rgba(255,255,255,0.8);
+          animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-content h3 { margin-bottom: 20px; color: var(--theme-accent); font-family: 'Noto Serif KR', serif; }
+        .modal-content p { color: #555; line-height: 1.8; margin-bottom: 30px; font-size: 1.05rem; }
+        .modal-btns { display: flex; gap: 15px; justify-content: center; }
+        .modal-btn { 
+          padding: 15px 30px; border-radius: 25px; border: none; cursor: pointer; 
+          font-family: 'Noto Serif KR', serif; font-weight: 700; transition: 0.3s;
+        }
+        .confirm-btn { background: var(--theme-accent); color: white; }
+        .cancel-btn { background: #f0f0f0; color: #777; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
         .hidden { display: none; }
+        .success-state { display: none; }
       </style>
       <div class="menu-container">
         <button class="menu-btn" id="menu-toggle-btn">☰</button>
@@ -295,21 +328,36 @@ class DearMeApp extends HTMLElement {
           <h1>Dear Me</h1>
         </div>
         <div class="greeting" id="greeting-text">안녕하세요, 미래의 당신은 어떤 모습인가요?</div>
-        <div style="text-align: center;"><button class="toggle-btn" id="toggle-date-btn" style="background:none; border: 1px solid #ccc; padding: 10px 20px; border-radius: 20px; cursor:pointer; color:#888;">📅 오늘 요일 입력하기</button></div>
-        <div class="date-input-section hidden" id="date-section"><input type="date" id="input-date"></div>
+        <div style="text-align: center; margin-bottom: 30px;"><button class="toggle-btn" id="toggle-date-btn" style="background:none; border: 1px solid #ccc; padding: 10px 20px; border-radius: 20px; cursor:pointer; color:#888;">📅 오늘 요일 입력하기</button></div>
+        <div class="date-input-section hidden" id="date-section" style="margin-bottom: 30px;"><input type="date" id="input-date"></div>
         <div class="workspace">
           <div class="input-group">
             <label for="gift-message">미래의 나에게 줄 선물</label>
-            <textarea id="gift-message" placeholder="소중한 메시지를 적어주세요..."></textarea>
+            <div id="quote-guide"></div>
+            <textarea id="gift-message" placeholder=""></textarea>
           </div>
           <div class="input-group"><label for="recipient-email">이메일 주소</label><input type="email" id="recipient-email" placeholder="메일 주소를 입력해 주세요." /></div>
-          <div class="input-group"><label for="unlock-date">이 선물을 언제 열어 볼까요?</label><input type="date" id="unlock-date" /></div>
-          <button class="action-button" id="seal-btn">밀봉해 드립니다</button>
+          <div class="input-group"><label for="unlock-date">이 선물을 언제 열어 볼까요?</label><input type="datetime-local" id="unlock-date" /></div>
+          <button class="action-button" id="seal-btn">편지를 보냅니다</button>
         </div>
       </div>
+
+      <!-- Confirmation Modal -->
+      <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-content">
+          <div style="font-size: 3rem; margin-bottom: 15px;">🔒</div>
+          <h3 id="modal-title">편지를 보냅니다</h3>
+          <p id="modal-message"></p>
+          <div class="modal-btns">
+            <button class="modal-btn cancel-btn" id="modal-cancel">취소</button>
+            <button class="modal-btn confirm-btn" id="modal-confirm">밀봉하기</button>
+          </div>
+        </div>
+      </div>
+
       <div class="success-state" id="success-state">
         <span class="success-icon" style="font-size: 5rem;">🕯️📜</span>
-        <h2 style="font-family: 'Noto Serif KR', serif; font-size: 2rem; margin: 30px 0 20px 0;">순간이 밀봉되었습니다.</h2>
+        <h2 style="font-family: 'Noto Serif KR', serif; font-size: 2rem; margin: 30px 0 20px 0;">순간이 저장되었습니다.</h2>
         <p style="color: #666; line-height: 1.8;">작성하신 마음은 안전하게 보관되었습니다.<br>약속한 날짜에 입력하신 이메일로 링크가 도착할 것입니다.</p>
         <div style="margin-top: 40px;"><button class="action-button" id="copy-link-btn" style="width: 100%; max-width: 320px;">🔗 캡슐 링크 복사하기</button></div>
         <div style="margin-top: 25px;"><button class="action-button" id="reset-app-btn" style="background: none; color: #8c7a6b; border: 2px solid #8c7a6b; box-shadow: none;">처음으로 돌아가기</button></div>
@@ -328,6 +376,11 @@ class DearMeApp extends HTMLElement {
     const sideMenu = this.shadowRoot.getElementById('side-menu');
     const toggleDateBtn = this.shadowRoot.getElementById('toggle-date-btn');
     const dateSection = this.shadowRoot.getElementById('date-section');
+
+    const confirmModal = this.shadowRoot.getElementById('confirm-modal');
+    const modalMessage = this.shadowRoot.getElementById('modal-message');
+    const modalConfirm = this.shadowRoot.getElementById('modal-confirm');
+    const modalCancel = this.shadowRoot.getElementById('modal-cancel');
 
     menuToggleBtn.addEventListener('click', (e) => { e.stopPropagation(); sideMenu.classList.toggle('show'); });
     document.addEventListener('click', () => sideMenu.classList.remove('show'));
@@ -348,23 +401,68 @@ class DearMeApp extends HTMLElement {
       toggleDateBtn.textContent = isHidden ? '닫기' : '📅 오늘 요일 입력하기';
     });
 
-    sealBtn.addEventListener('click', async () => {
+    sealBtn.addEventListener('click', () => {
+      const message = msgInput.value.trim();
+      const email = emailInput.value.trim();
+      const unlockDateVal = unlockInput.value;
+
+      if (!message || !email || !unlockDateVal) {
+        alert("모든 필드를 입력해 주세요.");
+        return;
+      }
+
+      alert("이 선물을 열어 볼 날짜에 편지가 도착합니다");
+
+      const dateObj = new Date(unlockDateVal);
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1;
+      const day = dateObj.getDate();
+      const hour = dateObj.getHours();
+      const minute = dateObj.getMinutes();
+
+      modalMessage.innerHTML = `버튼을 누르면, <strong>${year}년 ${month}월 ${day}일 ${hour}시 ${minute}분</strong>에<br><strong>${email}</strong> 주소로 메일이 전송됩니다.`;
+      confirmModal.classList.add('show');
+    });
+
+    modalCancel.addEventListener('click', () => confirmModal.classList.remove('show'));
+
+    modalConfirm.addEventListener('click', async () => {
+      confirmModal.classList.remove('show');
       const message = msgInput.value.trim();
       const email = emailInput.value.trim();
       const unlockDate = unlockInput.value;
-      if (!message || !email || !unlockDate) { alert("모든 필드를 입력해 주세요."); return; }
-      const capsule = { uid: "anonymous", content: message, email: email, created_at: new Date(), unlock_date: new Date(unlockDate), is_opened: false, is_sent: false, bg_image: this.selectedImageUrl };
+
+      const capsule = { 
+        uid: "anonymous", 
+        content: message, 
+        email: email, 
+        created_at: new Date(), 
+        unlock_date: new Date(unlockDate), 
+        is_opened: false, 
+        is_sent: false, 
+        bg_image: this.selectedImageUrl 
+      };
+
       try {
         let docId = "test-capsule-id";
-        if (typeof db !== 'undefined') { const docRef = await db.collection("capsules").add(capsule); docId = docRef.id; }
+        if (typeof db !== 'undefined') { 
+          const docRef = await db.collection("capsules").add(capsule); 
+          docId = docRef.id; 
+        }
+        
         this.shadowRoot.getElementById('copy-link-btn').onclick = () => {
           navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?id=${docId}`);
           alert("링크가 복사되었습니다.");
         };
+        
         this.shadowRoot.getElementById('reset-app-btn').onclick = () => window.location.reload();
+        
         mainContent.style.display = 'none';
         successState.style.display = 'block';
-      } catch (error) { console.error("Error:", error); alert("오류가 발생했습니다."); }
+      } catch (error) { 
+        console.error("Error:", error); 
+        alert("오류가 발생했습니다."); 
+      }
     });
   }
 
@@ -391,8 +489,10 @@ class DearMeApp extends HTMLElement {
     msgInput.addEventListener('input', () => {
       if (msgInput.value.trim()) {
         quoteGuide.classList.remove('active');
-        clearInterval(this.quoteInterval);
-        this.quoteInterval = null;
+        if (this.quoteInterval) {
+          clearInterval(this.quoteInterval);
+          this.quoteInterval = null;
+        }
       } else if (!this.quoteInterval) {
         updateQuote();
         quoteGuide.classList.add('active');
