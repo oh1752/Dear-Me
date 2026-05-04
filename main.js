@@ -411,7 +411,7 @@ class DearMeApp extends HTMLElement {
         return;
       }
 
-      alert("이 선물을 열어 볼 날짜에 편지가 도착합니다");
+      alert("위에 입력한 날짜에 맞추어서 메일이 전달됩니다.");
 
       const dateObj = new Date(unlockDateVal);
       const year = dateObj.getFullYear();
