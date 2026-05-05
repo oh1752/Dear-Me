@@ -15,6 +15,7 @@ Instead of traditional messaging, the app uses an internal **"Time-Sealing"** me
 - **Today's Date Toggle**: A button ("📅 오늘 요일 입력하기") to select a reference date and get intelligent suggestions.
 - **Side Navigation Menu**: A top-left dropdown menu (☰) for secondary settings.
 - **Cinematic Quote Guide**: Animated ghost-text in the message area to inspire writing.
+- **Disqus Comment Section**: Integrated community discussion area at the bottom of the landing page.
 
 ## 4. Adaptive Greeting Logic
 The landing screen provides a personalized greeting based on time/context:
@@ -40,3 +41,4 @@ The landing screen provides a personalized greeting based on time/context:
 8. [ ] Create a beautiful "Letter Opened" view.
 9. [ ] Implement Cloudflare Worker for scheduled email sending (Cron Trigger).
 10. [ ] Integrate Resend API for email delivery.
+11. [x] Integrate Disqus comment section.
