@@ -2,7 +2,7 @@
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
+  projectId: "jason-text-1-44153374-26bf1",
   storageBucket: "YOUR_STORAGE_BUCKET",
   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
   appId: "YOUR_APP_ID"
@@ -450,6 +450,22 @@ class DearMeApp extends HTMLElement {
           docId = docRef.id; 
         }
         
+        // --- Added: Call Worker to send confirmation email ---
+        try {
+          // Replace with your actual worker URL if different
+          const workerUrl = "https://dear-me.pages.dev"; 
+          await fetch(`${workerUrl}/api/confirm`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, unlockDate, docId })
+          });
+          console.log("Confirmation email requested.");
+        } catch (emailError) {
+          console.error("Failed to send confirmation email:", emailError);
+          // Don't block the UI if email fails, but log it
+        }
+        // -----------------------------------------------------
+
         this.shadowRoot.getElementById('copy-link-btn').onclick = () => {
           navigator.clipboard.writeText(`${window.location.origin}${window.location.pathname}?id=${docId}`);
           alert("링크가 복사되었습니다.");

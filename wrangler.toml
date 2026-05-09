@@ -10,6 +10,6 @@ exclude = [".git", ".idx", ".vscode", "blueprint.md", "GEMINI.md"]
 crons = ["0 0 * * *"]
 
 [vars]
-FIREBASE_PROJECT_ID = "YOUR_PROJECT_ID"
+FIREBASE_PROJECT_ID = "jason-text-1-44153374-26bf1"
 APP_URL = "https://dear-me.pages.dev"
-# RESEND_API_KEY should be added as a Secret via: wrangler secret put RESEND_API_KEY
+RESEND_API_KEY = "re_BpKD4hLZ_PxRD4aLEUYwN568efnzVLYr3"
